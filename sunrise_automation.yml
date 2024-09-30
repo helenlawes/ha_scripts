@@ -48,21 +48,19 @@ blueprint:
           min: 1
           max: 60
 
-    start_kelvin_temp:
-      description: Start Kelvin value (warm) for 1st run
+    start_color_rgb:
+      description: Start rgb value (warm) for 1st run
       selector:
-        color_temp:
-          unit: kelvin
-      default: 2500
-      name: Starting Kelvin
-    target_kelvin_1:
+        color_rgb:
+      default: [255, 0, 0]
+      name: Starting color
+    target_rgb_1:
       description: >-
-        Target Kelvin value (cold) for the end of the first run
+        Target rgb value (cold) for the end of the first run
       selector:
-        color_temp:
-          unit: kelvin
-      default: 3000
-      name: Target Kelvin 1
+        color_rgb:
+      default: [255, 150, 0]
+      name: Target rgb 1
     max_brightness_1:
       name: Maximum Brightness 1
       description: Finish value for first run
@@ -81,14 +79,13 @@ blueprint:
           max: 60
       default: 10
 
-    target_kelvin_2:
+    target_rgb_2:
       description: >-
-        Target Kelvin value (cold) for second run
+        Target rgb value (cold) for second run
       selector:
         color_temp:
-          unit: kelvin
-      default: 4000
-      name: Target Kelvin 2
+      default: [255, 0, 0]
+      name: Target rgb 2
     max_brightness_2:
       name: Maximum Brightness 2
       description: Finish value for second run
@@ -107,14 +104,13 @@ blueprint:
           max: 60
       default: 10
 
-    target_kelvin_3:
+    target_rgb_3:
       description: >-
-        Target Kelvin value (cold) for third run
+        Target rgb value (cold) for third run
       selector:
         color_temp:
-          unit: kelvin
-      default: 6500
-      name: Target Kelvin 3
+      default: [255, 255, 255]
+      name: Target rgb 3
     max_brightness_3:
       name: Maximum Brightness 3
       description: Finish value for third and final run
@@ -145,15 +141,15 @@ condition:
 action:
   - action: light.turn_on
     data:
-      color_temp_kelvin: !input start_kelvin_temp
+      rgb_color: !input start_color_rgb
       brightness_pct: 1
       entity_id: !input target_light
   - delay:
       seconds: 5
   - action: !input alarm_script
     data:
-      target_kelvin: !input target_kelvin_1
-      start_kelvin: !input start_kelvin_temp
+      target_rgb: !input target_rgb_1
+      start_rgb: !input start_color_rgb
       max_brightness_pct: !input max_brightness_1
       alarm_length: !input alarm_length_1
       steps_per_minute: !input steps_per_minute
@@ -167,8 +163,8 @@ action:
     then:
       - action: !input alarm_script
         data:
-          target_kelvin: !input target_kelvin_2
-          start_kelvin: !input target_kelvin_1
+          target_rgb: !input target_rgb_2
+          start_rgb: !input target_rgb_1
           max_brightness_pct: !input max_brightness_2
           alarm_length: !input alarm_length_2
           steps_per_minute: !input steps_per_minute
@@ -181,8 +177,8 @@ action:
     then:
       - action: !input alarm_script
         data:
-          target_kelvin: !input target_kelvin_3
-          start_kelvin: !input target_kelvin_2
+          target_rgb: !input target_rgb_3
+          start_rgb: !input target_rgb_2
           max_brightness_pct: !input max_brightness_3
           alarm_length: !input alarm_length_3
           steps_per_minute: !input steps_per_minute
