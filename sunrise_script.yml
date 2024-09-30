@@ -1,0 +1,121 @@
+blueprint:
+  name: Light Sunrise
+  description: >
+    Companion Script to the parabolic alarm automation blueprint.
+  domain: script
+  homeassistant:
+    min_version: 2024.9.0
+
+fields:
+  target_rgb:
+    description: Target RGB color values
+    selector:
+      color:
+        unit: hex
+    default: "#FFFFFF"
+    name: Target Color
+  start_rgb:
+    description: >
+      This is the start value. If the light is on the current value from the
+      state of the light will be used and this will be ignored.
+    selector:
+      color:
+        unit: hex
+    default: "#FF0000"
+    name: Warmest Color
+  max_brightness_pct:
+    description: Maximum brightness in percent to reach by the end of the script
+    selector:
+      number:
+        min: 1
+        max: 100
+    default: 80
+    name: Max brightness
+  alarm_length:
+    description: >
+      This is the start to finish time. Take this into account when setting up
+      the automation this script is called by.
+    selector:
+      number:
+        min: 1
+        max: 60
+    default: 10
+    name: Alarm Length
+  steps_per_minute:
+    description: How many steps per minute
+    selector:
+      number:
+        min: 1
+        max: 12
+    default: 12
+    name: Steps Per minute
+  target_light:
+    description: A single light or group
+    selector:
+      entity:
+        filter:
+          domain: light
+    name: Target Light
+  light_timeout:
+    description: >
+      Minutes to delay after Max Brightness has been reached to turn the light
+      back off. Value of 0 disables the timeout
+    selector:
+      number:
+        min: 0
+        max: 60
+    default: 5
+    name: Light Timeout
+
+variables:
+  steps: "{{ alarm_length * steps_per_minute }}"
+  min_brightness: |-
+    {% if states(target_light) == 'off' %}
+      3
+    {% else %}
+      {{ state_attr(target_light, 'brightness') }}
+    {% endif %}
+  max_brightness: "{{ max_brightness_pct * 2.55 }}"
+  color_step_r: "{{ (max(0, int('#' + target_rgb[1:3], 16) - int('#' + start_rgb[1:3], 16))) / steps }}"
+  color_step_g: "{{ (max(0, int('#' + target_rgb[2:4], 16) - int('#' + start_rgb[2:4], 16))) / steps }}"
+  color_step_b: "{{ (max(0, int('#' + target_rgb[5:], 16) - int('#' + start_rgb[5:], 16))) / steps }}"
+  bright_step: "{{ (max_brightness - min_brightness) / steps }}"
+  start_time: "{{ as_timestamp(now()) }}"
+  individual_step: "{{ 60 / steps_per_minute }}"
+
+sequence:
+  - repeat:
+      until:
+        - condition: or
+          conditions:
+            - condition: template
+              value_template: "{{ is_state(target_light, 'off') }}"
+            - condition: template
+              value_template: "{{ state_attr(target_light, 'brightness') >= max_brightness }}"
+            - condition: template
+              value_template: >-
+                {{ int('#' + state_attr(target_light, 'color_rgb'))[0] >=
+                int('#' + target_rgb)[1:3], 16 } }
+            - condition: template
+              value_template: >-
+                {{ int('#' + state_attr(target_light, 'color_rgb'))[1:3] >=
+                int('#' + target_rgb)[2:4], 16 } }
+            - condition: template
+              value_template: >-
+                {{ int('#' + state_attr(target_light, 'color_rgb'))[5:] >=
+                int('#' + target_rgb)[5:], 16 } }
+            - condition: template
+              value_template: >-
+                {{ (((as_timestamp(now()) - start_time) / individual_step) |
+                round(0, "ceil")) > steps }}
+      sequence:
+        - variables:
+            steps_to_now: |-
+              {{ ((as_timestamp(now()) - start_time) / individual_step) |
+                round(0, "ceil") }}
+            brightness: >-
+              {{ min_brightness + (bright_step * steps_to_now) | round(0,
+              'ceil') }}
+            red: "{{ int('#' + target_rgb)[1:3], 16 + (color_step_r * steps_to_now) }}"
+            green: "{{ int('#' + target_rgb)[2:4], 16 + (color_step_g * steps_to_now) }}"
+            blue: "{{ int('#' + target_rgb)[5:], 16 + (color_step_b * steps_to_now) }}"
