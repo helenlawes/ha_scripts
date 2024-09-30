@@ -83,8 +83,8 @@ blueprint:
       description: >-
         Target rgb value (cold) for second run
       selector:
-        color_temp:
-      default: [255, 0, 0]
+        color_rgb:
+      default: [255, 255, 0]
       name: Target rgb 2
     max_brightness_2:
       name: Maximum Brightness 2
@@ -108,7 +108,7 @@ blueprint:
       description: >-
         Target rgb value (cold) for third run
       selector:
-        color_temp:
+        color_rgb:
       default: [255, 255, 255]
       name: Target rgb 3
     max_brightness_3:
@@ -129,14 +129,14 @@ blueprint:
           max: 60
       default: 5
 
-trigger:
-  - platform: time
-    at: !input alarm_start_time
+# trigger:
+#   - platform: time
+#     at: !input alarm_start_time
 
-condition:
-  - condition: state
-    entity_id: !input workday_sensor
-    state: "on"
+# condition:
+#   - condition: state
+#     entity_id: !input workday_sensor
+#     state: "on"
 
 action:
   - action: light.turn_on
