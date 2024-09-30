@@ -125,7 +125,7 @@ sequence:
           then:
             - data:
                 brightness: "{{ brightness }}"
-                color_rgb: "{{ [red, green, blue] }}"
+                rgb_color: "{{ [red, green, blue] }}"
                 transition: "{{ individual_step - 1 }}"
               target:
                 entity_id: "{{ target_light }}"
