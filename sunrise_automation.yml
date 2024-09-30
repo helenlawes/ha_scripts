@@ -129,14 +129,14 @@ blueprint:
           max: 60
       default: 5
 
-# trigger:
-#   - platform: time
-#     at: !input alarm_start_time
+trigger:
+  - platform: time
+    at: !input alarm_start_time
 
-# condition:
-#   - condition: state
-#     entity_id: !input workday_sensor
-#     state: "on"
+condition:
+  - condition: state
+    entity_id: !input workday_sensor
+    state: "on"
 
 action:
   - action: light.turn_on
