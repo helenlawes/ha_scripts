@@ -93,14 +93,8 @@ sequence:
             - condition: template
               value_template: >-
                 {{ int(state_attr(target_light, 'rgb_color')[0]) >=
-                int(target_rgb[0], 16) }}
-            - condition: template
-              value_template: >-
-                {{ int(state_attr(target_light, 'rgb_color')[1]) >=
-                int(target_rgb[1], 16) }}
-            - condition: template
-              value_template: >-
-                {{ int(state_attr(target_light, 'rgb_color')[2]) >=
+                int(target_rgb[0], 16) and int(state_attr(target_light, 'rgb_color')[1]) >=
+                int(target_rgb[1], 16) and int(state_attr(target_light, 'rgb_color')[2]) >=
                 int(target_rgb[2], 16) }}
             - condition: template
               value_template: >-
