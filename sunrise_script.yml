@@ -74,9 +74,9 @@ variables:
       {{ state_attr(target_light, 'brightness') }}
     {% endif %}
   max_brightness: "{{ max_brightness_pct * 2.55 }}"
-  color_step_r: "{{ (max(0, int(target_rgb[0], 16) - int(start_rgb[0], 16))) / steps }}"
-  color_step_g: "{{ (max(0, int(target_rgb[1], 16) - int(start_rgb[1], 16))) / steps }}"
-  color_step_b: "{{ (max(0, int(target_rgb[2], 16) - int(start_rgb[2], 16))) / steps }}"
+  color_step_r: "{{ (int(target_rgb[0], 16) - int(start_rgb[0], 16)) / steps }}"
+  color_step_g: "{{ (int(target_rgb[1], 16) - int(start_rgb[1], 16)) / steps }}"
+  color_step_b: "{{ (int(target_rgb[2], 16) - int(start_rgb[2], 16)) / steps }}"
   bright_step: "{{ (max_brightness - min_brightness) / steps }}"
   start_time: "{{ as_timestamp(now()) }}"
   individual_step: "{{ 60 / steps_per_minute }}"
@@ -92,10 +92,15 @@ sequence:
               value_template: "{{ state_attr(target_light, 'brightness') >= max_brightness }}"
             - condition: template
               value_template: >-
-                {{ state_attr(target_light, 'rgb_color') != None and int(state_attr(target_light, 'rgb_color')[0]) >=
-                int(target_rgb[0], 16) and int(state_attr(target_light, 'rgb_color')[1]) >=
-                int(target_rgb[1], 16) and int(state_attr(target_light, 'rgb_color')[2]) >=
-                int(target_rgb[2], 16) }}
+                {% set rgb_color = state_attr(target_light, 'rgb_color') %} {%
+                if rgb_color != None %} {% if color_step_r < 0 %}
+                {{int(rgb_color[0]) <= int(target_rgb[0], 16)}} {% else %}
+                {{int(rgb_color[0]) >= int(target_rgb[0], 16)}} {% endif %} {%
+                if color_step_g < 0 %} {{int(rgb_color[1]) <= int(target_rgb[1],
+                16)}} {% else %} {{int(rgb_color[1]) >= int(target_rgb[1], 16)}}
+                {% endif %} {% if color_step_b < 0 %} {{int(rgb_color[2]) <=
+                int(target_rgb[2], 16)}} {% else %} {{int(rgb_color[2]) >=
+                int(target_rgb[2], 16)}} {% endif %} {% endif %}
             - condition: template
               value_template: >-
                 {{ (((as_timestamp(now()) - start_time) / individual_step) |
