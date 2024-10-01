@@ -52,14 +52,14 @@ blueprint:
       description: Start rgb value (warm) for 1st run
       selector:
         color_rgb:
-      default: [255, 0, 0]
+      default: [88, 21, 26]
       name: Starting color
     target_rgb_1:
       description: >-
         Target rgb value (cold) for the end of the first run
       selector:
         color_rgb:
-      default: [255, 150, 0]
+      default: [186, 109, 9]
       name: Target rgb 1
     max_brightness_1:
       name: Maximum Brightness 1
@@ -84,7 +84,7 @@ blueprint:
         Target rgb value (cold) for second run
       selector:
         color_rgb:
-      default: [255, 255, 0]
+      default: [255, 255, 255]
       name: Target rgb 2
     max_brightness_2:
       name: Maximum Brightness 2
@@ -109,7 +109,7 @@ blueprint:
         Target rgb value (cold) for third run
       selector:
         color_rgb:
-      default: [255, 255, 255]
+      default: [113, 168, 238]
       name: Target rgb 3
     max_brightness_3:
       name: Maximum Brightness 3
