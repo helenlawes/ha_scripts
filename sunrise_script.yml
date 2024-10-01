@@ -108,9 +108,9 @@ sequence:
             brightness: >-
               {{ min_brightness + (bright_step * steps_to_now) | round(0,
               'ceil') }}
-            red: "{{ int(target_rgb[0], 16) + (color_step_r * steps_to_now) }}"
-            green: "{{ int(target_rgb[1], 16) + (color_step_g * steps_to_now) }}"
-            blue: "{{ int(target_rgb[2], 16) + (color_step_b * steps_to_now) }}"
+            red: "{{ int(start_rgb[0], 16) + (color_step_r * steps_to_now) }}"
+            green: "{{ int(start_rgb[1], 16) + (color_step_g * steps_to_now) }}"
+            blue: "{{ int(start_rgb[2], 16) + (color_step_b * steps_to_now) }}"
         - delay:
             seconds: "{{ individual_step }}"
         - if:
