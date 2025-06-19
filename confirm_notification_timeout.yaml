@@ -83,7 +83,7 @@ sequence:
         event_data:
           action: "{{ action_dismiss }}"
     timeout:
-      hours: "{{ notify_timout.hours }}"
+      hours: "{{ notify_timeout.hours }}"
       minutes: "{{ notify_timeout.minutes }}"
       seconds: "{{ notify_timeout.seconds }}"
     continue_on_timeout: false
