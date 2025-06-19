@@ -1,5 +1,5 @@
 blueprint:
-  name: Confirmable Notification (with timeout)
+  name: Confirmable Timeout Notification
   description: >-
     A script that sends an actionable notification with a confirmation before
     running the specified action.
