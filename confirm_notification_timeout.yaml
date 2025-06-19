@@ -82,7 +82,10 @@ sequence:
         event_type: mobile_app_notification_action
         event_data:
           action: "{{ action_dismiss }}"
-    timeout: "{{ notify_timeout }}"
+    timeout:
+      hours: "{{ notify_timout.hours }}"
+      minutes: "{{ notify_timeout.minutes }}"
+      seconds: "{{ notify_timeout.seconds }}"
     continue_on_timeout: false
       
   - choose:
