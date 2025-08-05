@@ -1,0 +1,82 @@
+blueprint:
+  name: Washing favourite program
+  description: Setup and trigger a favourite washing machine program
+  input:
+    device_id:
+      name: Washing machine
+      selector:
+        device:
+          filter:
+            - integration: HomeWhiz
+    program:
+      name: Program
+      selector:
+        select:
+          options:
+            - label: Cottons
+              value: program_cottons
+            - label: Woollens
+              value: program_wool_handwash
+            - label: Eco 40-60
+              value: program_eco_40_60
+            - label: Synthetics
+              value: program_synthetics
+            - label: Mixed
+              value: program_mix
+    temp:
+      name: Temperature
+      selector:
+        select:
+          options:
+            - label: Cold
+              value: temperature_cold_wash
+            - label: 20
+              value: temperature_20
+            - label: 30
+              value: temperature_30
+            - label: 40
+              value: temperature_40
+            - label: 60
+              value: temperature_60
+            - label: 90
+              value: temperature_90
+            
+             
+triggers: []
+conditions: []
+actions:
+  - device_id: !input device_id
+    domain: select
+    entity_id: 45354b305e8c8d4707ff9a1d7b13b409
+    type: select_option
+    option: !input program
+  - device_id: !input device_id
+    domain: select
+    entity_id: fd6aa3cca6c2b39ee521d9a647ecca6d
+    type: select_option
+    option: !input temp
+  - device_id: !input device_id
+    domain: select
+    entity_id: 842b95f5376a1b6ec3582b8ffc3acfc6
+    type: select_option
+    option: spin_1400
+  - device_id: !input device_id
+    domain: select
+    entity_id: d246422a00cf6e4c650bad7b17a8d947
+    type: select_option
+    option: device_state_running
+  - wait_for_trigger:
+      - device_id: !input device_id
+        domain: select
+        entity_id: d246422a00cf6e4c650bad7b17a8d947
+        type: current_option_changed
+        trigger: device
+        from: device_state_running
+        to: device_state_on
+  - action: automation.trigger
+    metadata: {}
+    data:
+      skip_condition: true
+    target:
+      entity_id: automation.spin_washing
+mode: single
